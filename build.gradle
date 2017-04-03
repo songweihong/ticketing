@@ -28,9 +28,9 @@ group 'ticketing'
 version '1.0.0-SNAPSHOT'
 
 dependencies {
-    // tag::jetty[]
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-actuator")
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.5.2.RELEASE'
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.6.1'
     compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.6.1'
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'

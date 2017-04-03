@@ -23,8 +23,8 @@ public class TicketingController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/seats/count")
-    public ResponseEntity<Integer> numSeatsAvailable() {
-        return new ResponseEntity<Integer>(ticketService.numSeatsAvailable(), HttpStatus.OK);
+    public ResponseEntity<SeatCount> numSeatsAvailable() {
+        return new ResponseEntity<SeatCount>(new SeatCount(ticketService.numSeatsAvailable()), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/seats/hold")
@@ -36,10 +36,34 @@ public class TicketingController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/seats/reserve")
-    public ResponseEntity<String> reserveSeats(@RequestParam int seatHoldId,
-                                               @RequestParam String customerEmail) {
+    public ResponseEntity<Reservation> reserveSeats(@RequestParam int seatHoldId,
+                                                    @RequestParam String customerEmail) {
 
         String confirmation = ticketService.reserveSeats(seatHoldId, customerEmail);
-        return new ResponseEntity(confirmation, confirmation == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
+        Reservation reservation = confirmation != null ? new Reservation(confirmation) : null;
+        return new ResponseEntity(reservation, confirmation == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
+    }
+
+    private static class SeatCount {
+        private int seatCount;
+        public SeatCount(int seatCount) {
+            this.seatCount = seatCount;
+        }
+
+        public int getSeatCount() {
+            return seatCount;
+        }
+    }
+
+    private static class Reservation {
+        private String confirmation;
+
+        public Reservation(String confirmation) {
+            this.confirmation = confirmation;
+        }
+
+        public String getConfirmation() {
+            return confirmation;
+        }
     }
 }
