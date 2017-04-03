@@ -6,15 +6,17 @@ import com.acme.ticketing.entity.SeatType;
 import com.acme.ticketing.exception.BookingValidationException;
 import com.acme.ticketing.service.TicketService;
 import com.google.common.collect.Lists;
-import org.junit.Before;
-import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -29,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by PC on 4/2/2017.
  */
+@Test(groups = {"unit"})
 public class TicketingControllerTest {
     private static final String EMAIL = "test@acme.com";
 
@@ -38,7 +41,7 @@ public class TicketingControllerTest {
     private TicketingController ticketingController;
     private MockMvc mockMvc;
 
-    @Before
+    @BeforeClass
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
 
@@ -46,6 +49,11 @@ public class TicketingControllerTest {
                         .setMessageConverters(new MappingJackson2HttpMessageConverter())
                         .setControllerAdvice(new WebControllerAdvice())
                         .build();
+    }
+
+    @BeforeMethod
+    public void setupTest() {
+        Mockito.reset(ticketService);
     }
 
     @Test
@@ -96,9 +104,7 @@ public class TicketingControllerTest {
     public void testHoldSeatsNotFound() throws Exception {
         // given
         int numSeats = 1;
-
         when(ticketService.findAndHoldSeats(eq(numSeats), eq(EMAIL))).thenReturn(null);
-
         // when
         ResultActions actions = mockMvc.perform(post("/ticketing/seats/hold")
                                                 .param("numOfSeats", String.valueOf(numSeats))
